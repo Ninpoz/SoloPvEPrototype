@@ -3,7 +3,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float turnSpeed = 10f;
 
     private Vector3 targetPosition;
 
@@ -23,6 +24,19 @@ public class PlayerController : MonoBehaviour
             {
                 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
             }
+        }
+
+        Vector3 direction = targetPosition - transform.position;
+        direction.y = 0; // Keep the player on the same height
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                turnSpeed * Time.deltaTime
+            );
         }
 
         transform.position = Vector3.MoveTowards(
