@@ -11,12 +11,14 @@ public class PlayerAttack : MonoBehaviour
     private float lastAttackTime;
     private EnemyHealth enemyHealth;
     private PlayerController playerController;
+    private Animator animator;
 
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        animator = GetComponentInChildren<Animator>();
         playerController = GetComponent<PlayerController>();
 
         if (enemy != null)
@@ -62,6 +64,11 @@ public class PlayerAttack : MonoBehaviour
 
         Vector3 targetPosition = GetTargetPosition();
         RotateTowards(targetPosition);
+        
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
         enemyHealth.TakeDamage(damage);
         lastAttackTime = Time.time;
     }
