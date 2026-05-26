@@ -6,7 +6,9 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Transform enemy;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private int damage = 1;
-
+    [SerializeField] private float attackCooldown = 0.75f;
+    
+    private float lastAttackTime;
     private EnemyHealth enemyHealth;
     private PlayerController playerController;
 
@@ -48,6 +50,11 @@ public class PlayerAttack : MonoBehaviour
             return;
         }
 
+        if (Time.time - lastAttackTime < attackCooldown)
+        {
+            return;
+        }
+
         if (playerController != null)
         {
             playerController.StopMovement();
@@ -56,6 +63,7 @@ public class PlayerAttack : MonoBehaviour
         Vector3 targetPosition = GetTargetPosition();
         RotateTowards(targetPosition);
         enemyHealth.TakeDamage(damage);
+        lastAttackTime = Time.time;
     }
 
 
