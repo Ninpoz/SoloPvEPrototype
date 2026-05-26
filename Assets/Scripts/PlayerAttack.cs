@@ -6,15 +6,17 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Transform enemy;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private int damage = 1;
-    [SerializeField] private float turnSpeed = 10f;
 
     private EnemyHealth enemyHealth;
+    private PlayerController playerController;
 
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        playerController = GetComponent<PlayerController>();
+
         if (enemy != null)
         {
             enemyHealth = enemy.GetComponent<EnemyHealth>();
@@ -46,6 +48,11 @@ public class PlayerAttack : MonoBehaviour
             return;
         }
 
+        if (playerController != null)
+        {
+            playerController.StopMovement();
+        }
+
         Vector3 targetPosition = GetTargetPosition();
         RotateTowards(targetPosition);
         enemyHealth.TakeDamage(damage);
@@ -72,10 +79,6 @@ public class PlayerAttack : MonoBehaviour
         }
 
         Quaternion targetRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            targetRotation,
-            turnSpeed * Time.deltaTime
-        );
+        transform.rotation = targetRotation;
     }
 }

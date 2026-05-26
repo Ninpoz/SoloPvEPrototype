@@ -45,4 +45,9 @@ public class PlayerController : MonoBehaviour
             moveSpeed * Time.deltaTime
         );
     }
+
+    public void StopMovement()
+    {
+        targetPosition = transform.position;
+    }
 }

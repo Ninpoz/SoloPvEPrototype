@@ -31,6 +31,7 @@ public class EnemyHealth : MonoBehaviour
     {
         isDead = true;
         Debug.Log("Enemy has died!");
+        gameObject.SetActive(false);
 
     }
 }

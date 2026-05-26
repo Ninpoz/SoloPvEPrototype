@@ -31,6 +31,7 @@ public class PlayerHealth : MonoBehaviour
     {
         isDead = true;
         Debug.Log("Player has died!");
+        gameObject.SetActive(false);
 
     }
 }
