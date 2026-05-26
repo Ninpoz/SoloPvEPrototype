@@ -19,11 +19,14 @@ public class EnemyChaser : MonoBehaviour
     private Vector3 homePosition;
     private bool wasInAttackRange;
     private PlayerHealth playerHealth;
+    private EnemyHealth enemyHealth;
     private float lastAttackTime;
 
     void Start()
     {
         homePosition = transform.position;
+
+        enemyHealth = GetComponent<EnemyHealth>();
 
         if (player != null)
         {
@@ -33,6 +36,11 @@ public class EnemyChaser : MonoBehaviour
 
     void Update()
     {
+        if (enemyHealth != null && enemyHealth.IsDead)
+        {
+            return;
+        }
+
         if (player == null)
         {
             return;
