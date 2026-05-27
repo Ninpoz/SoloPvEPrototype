@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 targetPosition;
     private Vector3 verticalVelocity;
 
+    private bool hasMoveTarget;
+
     private CharacterController characterController;
     private Animator animator;
 
@@ -20,6 +22,9 @@ public class PlayerController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
 
         targetPosition = transform.position;
+        hasMoveTarget = false;
+
+        SetRunning(false);
     }
 
     void Update()
@@ -41,12 +46,21 @@ public class PlayerController : MonoBehaviour
                     transform.position.y,
                     hit.point.z
                 );
+
+                hasMoveTarget = true;
             }
         }
     }
 
     private void MoveToTarget()
     {
+        if (!hasMoveTarget)
+        {
+            SetRunning(false);
+            ApplyGravity();
+            return;
+        }
+
         Vector3 direction = targetPosition - transform.position;
         direction.y = 0f;
 
@@ -68,17 +82,22 @@ public class PlayerController : MonoBehaviour
                 moveDirection * moveSpeed * Time.deltaTime
             );
         }
+        else
+        {
+            hasMoveTarget = false;
+        }
 
         ApplyGravity();
-
-        if (animator != null)
-        {
-            animator.SetBool("IsRunning", isMoving);
-        }
+        SetRunning(isMoving && hasMoveTarget);
     }
 
     private void ApplyGravity()
     {
+        if (characterController == null)
+        {
+            return;
+        }
+
         if (characterController.isGrounded && verticalVelocity.y < 0f)
         {
             verticalVelocity.y = -2f;
@@ -89,13 +108,18 @@ public class PlayerController : MonoBehaviour
         characterController.Move(verticalVelocity * Time.deltaTime);
     }
 
+    private void SetRunning(bool isRunning)
+    {
+        if (animator != null)
+        {
+            animator.SetBool("IsRunning", isRunning);
+        }
+    }
+
     public void StopMovement()
     {
         targetPosition = transform.position;
-
-        if (animator != null)
-        {
-            animator.SetBool("IsRunning", false);
-        }
+        hasMoveTarget = false;
+        SetRunning(false);
     }
 }
