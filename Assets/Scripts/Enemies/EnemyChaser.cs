@@ -68,8 +68,8 @@ public class EnemyChaser : MonoBehaviour
             return;
         }
 
-        float distanceFromHomeToPlayer = Vector3.Distance(homePosition, player.position);
-        bool playerTooFarFromHome = distanceFromHomeToPlayer > maxChaseDistance;
+        float distanceFromHomeToEnemy = GetFlatDistance(homePosition, transform.position);
+        bool enemyTooFarFromHome = distanceFromHomeToEnemy > maxChaseDistance;
 
         float distanceToPlayer = GetDistanceToPlayer();
 
@@ -78,7 +78,7 @@ public class EnemyChaser : MonoBehaviour
 
         Vector3 targetPosition = GetTargetPosition();
 
-        if (playerTooFarFromHome)
+        if (enemyTooFarFromHome)
         {
             HandleReturnHomeState();
         }
@@ -98,6 +98,14 @@ public class EnemyChaser : MonoBehaviour
         ApplyGravity();
     }
 
+    private float GetFlatDistance(Vector3 firstPosition, Vector3 secondPosition)
+    {
+        firstPosition.y = 0f;
+        secondPosition.y = 0f;
+
+        return Vector3.Distance(firstPosition, secondPosition);
+    }
+
     private float GetDistanceToPlayer()
     {
         if (enemyController != null && playerController != null)
@@ -111,13 +119,7 @@ public class EnemyChaser : MonoBehaviour
             return Vector3.Distance(enemyClosestPoint, playerClosestPoint);
         }
 
-        Vector3 enemyPosition = transform.position;
-        Vector3 playerPosition = player.position;
-
-        enemyPosition.y = 0f;
-        playerPosition.y = 0f;
-
-        return Vector3.Distance(enemyPosition, playerPosition);
+        return GetFlatDistance(transform.position, player.position);
     }
 
     private Vector3 GetTargetPosition()
@@ -143,8 +145,6 @@ public class EnemyChaser : MonoBehaviour
 
         playerHealth.TakeDamage(damage);
         lastAttackTime = Time.time;
-
-        Debug.Log("Bear attacked player");
     }
 
     private void HandleChaseState(Vector3 targetPosition)
@@ -157,7 +157,7 @@ public class EnemyChaser : MonoBehaviour
 
     private void HandleReturnHomeState()
     {
-        float distanceToHome = Vector3.Distance(transform.position, homePosition);
+        float distanceToHome = GetFlatDistance(transform.position, homePosition);
 
         if (distanceToHome <= stoppingDistance)
         {
