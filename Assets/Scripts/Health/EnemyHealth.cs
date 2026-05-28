@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 10;
+    [SerializeField] private WorldHealthBar healthBar;
 
     private int currentHealth;
 
@@ -11,6 +12,7 @@ public class EnemyHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        UpdateHealthBar();
     }
 
     public void TakeDamage(int damage)
@@ -21,11 +23,20 @@ public class EnemyHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
+        UpdateHealthBar();
         Debug.Log($"Enemy took {damage} damage, current health: {currentHealth}");
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             IsDead = true;
+        }
+    }
+
+    private void UpdateHealthBar()
+    {
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHealth, maxHealth);
         }
     }
 }
